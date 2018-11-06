@@ -1,5 +1,5 @@
 ---
-title: "Week 1-Zoo"
+title: "Week 1-Zoo (part 2)"
 output: html_document
 ---
 
@@ -8,17 +8,20 @@ output: html_document
 #you may need to install packages, if this is the first time you use them. Select Packages > Install Packages in R/RStudio) 
 
 
-setwd("/Users/mylesgartland/OneDrive - Rockhurst University/Courses/Forecasting/TimeSeries/time_series/Week 1")
+setwd("/Users/mylesgartland/OneDrive - Rockhurst University/Courses/Forecasting/Time Series/time_series/time_series/Week 1")
 
 
 ```{r}
 library(tseries)
 library(zoo)
 #import dataset into a dataframe
-setwd("/Users/mylesgartland/OneDrive - Rockhurst University/Courses/Forecasting/Time Series/time_series/Week 1")
+setwd("/Users/mylesgartland/OneDrive - Rockhurst University/Courses/Forecasting/Time Series/time_series/time_series/Week 1")
 cisco = read.table('Data/cisco_00-10.csv', header=T, sep=',')
 # create time series for cisco prices
 ciscots = zoo(cisco$Price, as.Date(as.character(cisco$Date), format = "%m/%d/%y"))
+head(ciscots)
+
+plot(ciscots)
 ```
 
 
@@ -47,6 +50,8 @@ cisco$Date=as.Date(as.character(cisco$Date), format = "%m/%d/%y")
 cisco=cisco[order(cisco$Date),]
 ```
 #Creating new variables 
+
+
 
 
 ```{r}                     
@@ -59,19 +64,31 @@ pricedif = diff(ciscots);
 #compute simple returns ret = (p_t-p_(t-1))/p_(t-1)
 ret=(ciscots-pricelag)/pricelag
 #Example of data analysis for cisco dataset
+
 ```
+
+NOTE: When you see violation of the 4 moments, you can transform.
+
+The first step to try "normzalize" data is to take the log of it. 
+
+The frist step to try to remove the trend (detrend it) it to take the difference. 
 
 
 ```{r}    
 #DEFINE LOG RETURNS
 #rts is a time series object since it is created from a TS object
 rts = diff(log(ciscots))
+plot(rts)
+
+#Note the change in pre-transformed and post-transform plots
 
 #to retrieve numerical values from time series use coredata()
 # rt is a numerical vector (no date information)
 rt=coredata(rts)
 #print first 6 values
 head(rt)
+
+
 ```
 
 # LOAD LIBRARIES
@@ -90,7 +107,7 @@ basicStats(rt)
 # par(mfcol=c(2,2)) 
 hist(rt, xlab="Cisco log returns", prob=TRUE, main="Histogram") 
 # add approximating normal density curve 
-xfit<-seq(min(rt),max(rt),length=40) 
+xfit<-seq(min(rt),max(rt),length=60) 
 yfit<-dnorm(xfit,mean=mean(rt),sd=sd(rt)) 
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
